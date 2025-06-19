@@ -1,22 +1,24 @@
-import { ViewPlugin, keymap } from '@codemirror/view';
-import { syntaxHighlighting } from '@codemirror/language';
-import { syntaxTree } from '@codemirror/language';
+import { cursorLineDown, cursorLineUp } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
-import { cursorLineUp, cursorLineDown } from '@codemirror/commands';
+import { syntaxHighlighting, syntaxTree } from '@codemirror/language';
+import { ViewPlugin, keymap } from '@codemirror/view';
 
-import tagParser from './tagParser';
 import highlightStyle from './highlightStyle';
-import RichEditPlugin from './richEdit';
 import renderBlock from './renderBlock';
+import RichEditPlugin from './richEdit';
+import tagParser from './tagParser';
 
 import type { Config } from '@markdoc/markdoc';
 
-export type MarkdocPluginConfig = { lezer?: any, markdoc: Config };
+export type MarkdocPluginConfig = { lezer?: any; markdoc: Config };
 
-function findBlockAt(state: any, pos: number): { from: number, to: number } | null {
+function findBlockAt(
+  state: any,
+  pos: number
+): { from: number; to: number } | null {
   const tree = syntaxTree(state);
-  let result: { from: number, to: number } | null = null;
-  
+  let result: { from: number; to: number } | null = null;
+
   tree.iterate({
     enter(node) {
       if (['Table', 'Blockquote', 'MarkdocTag'].includes(node.name)) {
@@ -26,28 +28,28 @@ function findBlockAt(state: any, pos: number): { from: number, to: number } | nu
         }
       }
       return true;
-    }
+    },
   });
-  
+
   return result;
 }
 
 function customCursorUp(view: any): boolean {
   const { from } = view.state.selection.main;
   const line = view.state.doc.lineAt(from);
-  
+
   // Check if we're currently inside a block - if so, use default behavior
   const currentBlock = findBlockAt(view.state, from);
   if (currentBlock) {
     return cursorLineUp(view);
   }
-  
+
   // If we're not on the first line, check the line above
   if (line.number > 1) {
     const prevLine = view.state.doc.line(line.number - 1);
     const colOffset = from - line.from;
     const targetPos = Math.min(prevLine.from + colOffset, prevLine.to);
-    
+
     // Check if target position is in a block
     const block = findBlockAt(view.state, targetPos);
     if (block) {
@@ -57,15 +59,15 @@ function customCursorUp(view: any): boolean {
       const lastLine = blockLines[blockLines.length - 1];
       const lastLineStart = block.to - lastLine.length;
       const targetInBlock = Math.min(lastLineStart + colOffset, block.to - 1);
-      
-      view.dispatch({ 
+
+      view.dispatch({
         selection: { anchor: Math.max(targetInBlock, block.from) },
-        scrollIntoView: true 
+        scrollIntoView: true,
       });
       return true;
     }
   }
-  
+
   // Fall back to default behavior
   return cursorLineUp(view);
 }
@@ -73,19 +75,19 @@ function customCursorUp(view: any): boolean {
 function customCursorDown(view: any): boolean {
   const { from } = view.state.selection.main;
   const line = view.state.doc.lineAt(from);
-  
+
   // Check if we're currently inside a block - if so, use default behavior
   const currentBlock = findBlockAt(view.state, from);
   if (currentBlock) {
     return cursorLineDown(view);
   }
-  
+
   // If we're not on the last line, check the line below
   if (line.number < view.state.doc.lines) {
     const nextLine = view.state.doc.line(line.number + 1);
     const colOffset = from - line.from;
     const targetPos = Math.min(nextLine.from + colOffset, nextLine.to);
-    
+
     // Check if target position is in a block
     const block = findBlockAt(view.state, targetPos);
     if (block) {
@@ -94,23 +96,23 @@ function customCursorDown(view: any): boolean {
       const blockLines = blockText.split('\n');
       const firstLineEnd = block.from + blockLines[0].length;
       const targetInBlock = Math.min(block.from + colOffset, firstLineEnd);
-      
-      view.dispatch({ 
+
+      view.dispatch({
         selection: { anchor: targetInBlock },
-        scrollIntoView: true 
+        scrollIntoView: true,
       });
       return true;
     }
   }
-  
+
   // Fall back to default behavior
   return cursorLineDown(view);
 }
 
 export default function (config: MarkdocPluginConfig) {
   const mergedConfig = {
-    ...config.lezer ?? [],
-    extensions: [tagParser, ...config.lezer?.extensions ?? []]
+    ...(config.lezer ?? []),
+    extensions: [tagParser, ...(config.lezer?.extensions ?? [])],
   };
 
   return ViewPlugin.fromClass(RichEditPlugin, {
@@ -121,14 +123,18 @@ export default function (config: MarkdocPluginConfig) {
       markdown(mergedConfig),
       keymap.of([
         { key: 'ArrowUp', run: customCursorUp },
-        { key: 'ArrowDown', run: customCursorDown }
-      ])
+        { key: 'ArrowDown', run: customCursorDown },
+      ]),
     ],
     eventHandlers: {
       mousedown({ target }, view) {
-        if (target instanceof Element && target.matches('.cm-markdoc-renderBlock *'))
+        if (
+          target instanceof Element &&
+          target.matches('.cm-markdoc-renderBlock *')
+        ) {
           view.dispatch({ selection: { anchor: view.posAtDOM(target) } });
-      }
-    }
+        }
+      },
+    },
   });
 }
