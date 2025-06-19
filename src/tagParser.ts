@@ -3,7 +3,8 @@ import type { MarkdownConfig } from '@lezer/markdown';
 
 export default {
   defineNodes: [
-    { name: 'MarkdocTag', block: true, style: t.meta }
+    { name: 'MarkdocTag', block: true, style: t.meta },
+    { name: 'MarkdocImage', block: true, style: t.meta }
   ],
   parseBlock: [{
     name: 'MarkdocTag',
@@ -17,6 +18,21 @@ export default {
       if (!content.startsWith('{%') || !content.endsWith('%}')) return false;
 
       cx.addElement(cx.elt('MarkdocTag', cx.lineStart, cx.lineStart + line.text.length));
+      cx.nextLine();
+      return true;
+    },
+  }, {
+    name: 'MarkdocImage',
+    endLeaf(_cx, line, _leaf) {
+      return line.next == 33 && line.text.slice(line.pos).trim().startsWith('![[');
+    },
+    parse(cx, line) {
+      if (line.next != 33) return false;
+
+      const content = line.text.slice(line.pos).trim();
+      if (!content.startsWith('![[') || !content.endsWith(']]')) return false;
+
+      cx.addElement(cx.elt('MarkdocImage', cx.lineStart, cx.lineStart + line.text.length));
       cx.nextLine();
       return true;
     },

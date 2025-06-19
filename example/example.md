@@ -45,3 +45,6 @@ class Example {
   }
 }
 ```
+
+## Image
+![[redrocks.png]]

@@ -25,6 +25,7 @@ const decorationHidden = Decoration.mark({ class: 'cm-markdoc-hidden' });
 const decorationBullet = Decoration.mark({ class: 'cm-markdoc-bullet' });
 const decorationCode = Decoration.mark({ class: 'cm-markdoc-code' });
 const decorationTag = Decoration.mark({ class: 'cm-markdoc-tag' });
+const decorationImage = Decoration.mark({ class: 'cm-markdoc-image-syntax' });
 
 export default class RichEditPlugin implements PluginValue {
   decorations: DecorationSet;
@@ -48,6 +49,18 @@ export default class RichEditPlugin implements PluginValue {
         enter(node) {
           if (node.name === 'MarkdocTag')
             widgets.push(decorationTag.range(node.from, node.to));
+
+          if (node.name === 'MarkdocImage') {
+            // Hide image text when cursor is NOT within the image
+            const isWithinImage = cursor.from >= node.from && cursor.to <= node.to;
+            
+            if (!isWithinImage) {
+              widgets.push(decorationHidden.range(node.from, node.to));
+            } else {
+              // Style the image text when cursor IS within the image
+              widgets.push(decorationImage.range(node.from, node.to));
+            }
+          }
 
           if (node.name === 'FencedCode')
             widgets.push(decorationCode.range(node.from, node.to));

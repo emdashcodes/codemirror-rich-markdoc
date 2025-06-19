@@ -75,6 +75,56 @@ class RenderBlockWidget extends WidgetType {
   }
 }
 
+class ImageWidget extends WidgetType {
+  imagePath: string;
+  nodeFrom: number;
+
+  constructor(public source: string, nodeFrom: number, public showSyntax: boolean = false) {
+    super();
+    this.nodeFrom = nodeFrom;
+    // Extract image path from ![[path]] syntax
+    const match = source.match(/!\[\[([^\]]+)\]\]/);
+    this.imagePath = match ? match[1] : '';
+  }
+
+  eq(widget: ImageWidget): boolean {
+    return widget.source === this.source && widget.showSyntax === this.showSyntax && widget.nodeFrom === this.nodeFrom;
+  }
+
+  toDOM(): HTMLElement {
+    let container = document.createElement('div');
+    container.className = 'cm-markdoc-image';
+    container.setAttribute('data-image-source', this.source);
+    container.setAttribute('data-node-from', this.nodeFrom.toString());
+    container.style.cursor = 'text'; // Make entire container clickable
+
+    let img = document.createElement('img');
+    img.src = this.imagePath;
+    img.alt = this.imagePath;
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+    img.style.cursor = 'text';
+
+    // Handle image load errors
+    img.onerror = () => {
+      img.style.display = 'none';
+      let errorDiv = document.createElement('div');
+      errorDiv.className = 'cm-markdoc-image-error';
+      errorDiv.style.cursor = 'text'; // Make error div clickable too
+      errorDiv.textContent = `"${this.imagePath}" could not be found.`;
+      container.appendChild(errorDiv);
+    };
+
+    container.appendChild(img);
+    return container;
+  }
+
+  ignoreEvent(event: Event): boolean {
+    // Let CodeMirror handle mouse events - this should position cursor properly
+    return false;
+  }
+}
+
 function replaceBlocks(state: EditorState, config: Config, from?: number, to?: number) {
   const decorations: Range<Decoration>[] = [];
   const [cursor] = state.selection.ranges;
@@ -85,8 +135,22 @@ function replaceBlocks(state: EditorState, config: Config, from?: number, to?: n
   syntaxTree(state).iterate({
     from, to,
     enter(node) {
-      if (!['Table', 'Blockquote', 'MarkdocTag'].includes(node.name))
+      if (node.name === 'MarkdocImage') {
+      }
+      if (!['Table', 'Blockquote', 'MarkdocTag', 'MarkdocImage'].includes(node.name))
         return;
+
+      if (node.name === 'MarkdocImage') {
+        const text = state.doc.sliceString(node.from, node.to);
+        // Always add image widget after the text - NEVER replace the text
+        const decoration = Decoration.widget({
+          widget: new ImageWidget(text, node.from, false),
+          block: true,
+          side: 1, // Place after the line
+        });
+        decorations.push(decoration.range(node.to));
+        return;
+      }
 
       if (node.name === 'MarkdocTag') {
         const text = state.doc.sliceString(node.from, node.to);
