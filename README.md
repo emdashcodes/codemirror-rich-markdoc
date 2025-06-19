@@ -12,11 +12,69 @@ When you add the plugin to a CodeMirror `EditorState`, you can optionally pass i
 
 This plugin is inspired by [HyperMD](https://github.com/laobubu/HyperMD), a CodeMirror 5 rich Markdown plugin that is no longer actively maintained. This plugin is written from scratch and does not use any existing HyperMD code, but it aims to bring similar functionality to CodeMirror 6.
 
+## Installation
+
+```bash
+npm install
+```
+
+## Development
+
+### Prerequisites
+
+- Node.js 18 or later
+- npm
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start development build (with watch mode)
+npm run dev
+```
+
+### Available Scripts
+
+#### Code Quality
+
+```bash
+# TypeScript type checking
+npm run typecheck
+
+# Linting (ESLint)
+npm run lint              # Check for linting errors
+npm run lint:fix          # Auto-fix linting errors
+
+# Code formatting (Prettier)
+npm run format            # Format all code
+npm run format:check      # Check if code is properly formatted
+```
+
+#### Build
+
+```bash
+# Build the plugin
+npm run build
+
+# Run complete CI pipeline (typecheck + lint + format + build)
+npm run ci
+```
+
+#### Running the Example
+
+```bash
+cd example
+npm install
+npm start    # Start development server on http://localhost:8000
+```
+
 ## Known Issues
 
-* It is still missing proper support for Markdown image syntax
-* Text surrounded by brackets (`[foo]`) is erroneously rendered as though it is a link
-* In ATX-style headers, the renderer always assumes there is one space between the header mark and the header text instead of computing the actual amount of whitespace
-* The rendered block replacement code is not yet optimized, so it recomputes all of the replaced regions on every operation instead of only updating them as needed
-* Clicking inside of rendered blocks causes the cursor to be placed at the equivalent position in the document, which may not match the position of the rendered content
-* Nested Markdoc tags do not yet render correctly
+- It is still missing proper support for Markdown image syntax
+- Text surrounded by brackets (`[foo]`) is erroneously rendered as though it is a link
+- In ATX-style headers, the renderer always assumes there is one space between the header mark and the header text instead of computing the actual amount of whitespace
+- The rendered block replacement code is not yet optimized, so it recomputes all of the replaced regions on every operation instead of only updating them as needed
+- Clicking inside of rendered blocks causes the cursor to be placed at the equivalent position in the document, which may not match the position of the rendered content
+- Nested Markdoc tags do not yet render correctly
