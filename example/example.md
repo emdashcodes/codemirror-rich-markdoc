@@ -19,14 +19,15 @@ This is **formatted** text inside of a generic tag.
 ## Blockquote
 
 > This is a **sample** blockquote
+> This is a second line of the blockquote
 
 ## Bulleted list
 
 * This is a sample list
 * This is another list item
-    * This is an indented list item
-        * This is a deeply nested item
-    * This is another indented list item
+  * This is an indented list item
+    * This is a deeply nested item
+  * This is another indented list item
 
 ## Table
 
