@@ -11,9 +11,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "typescript.preferences.organizeImportsCollation": "ordinal",
-  "typescript.preferences.organizeImportsIgnoreCase": "auto",
-  "typescript.preferences.organizeImportsNumericCollation": true,
   "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "files.eol": "\n",

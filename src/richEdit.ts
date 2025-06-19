@@ -1,8 +1,8 @@
-import { Decoration, PluginValue } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
+import { Decoration, PluginValue } from '@codemirror/view';
 
-import type { DecorationSet, EditorView, ViewUpdate } from '@codemirror/view';
 import type { Range } from '@codemirror/state';
+import type { DecorationSet, EditorView, ViewUpdate } from '@codemirror/view';
 
 const tokenElement = [
   'InlineCode',

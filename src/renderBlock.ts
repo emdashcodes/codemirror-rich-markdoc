@@ -1,12 +1,12 @@
-import { Decoration, WidgetType, EditorView } from '@codemirror/view';
-import { RangeSet, StateField } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
+import { RangeSet, StateField } from '@codemirror/state';
+import { Decoration, EditorView, WidgetType } from '@codemirror/view';
 
 import markdoc from '@markdoc/markdoc';
 
-import type { Config } from '@markdoc/markdoc';
-import type { DecorationSet } from '@codemirror/view';
 import type { EditorState, Range } from '@codemirror/state';
+import type { DecorationSet } from '@codemirror/view';
+import type { Config } from '@markdoc/markdoc';
 
 const defaultConfig: Config = {
   nodes: {

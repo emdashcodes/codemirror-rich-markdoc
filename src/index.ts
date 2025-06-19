@@ -1,13 +1,12 @@
-import { ViewPlugin, keymap } from '@codemirror/view';
-import { syntaxHighlighting } from '@codemirror/language';
-import { syntaxTree } from '@codemirror/language';
+import { cursorLineDown, cursorLineUp } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
-import { cursorLineUp, cursorLineDown } from '@codemirror/commands';
+import { syntaxHighlighting, syntaxTree } from '@codemirror/language';
+import { ViewPlugin, keymap } from '@codemirror/view';
 
-import tagParser from './tagParser';
 import highlightStyle from './highlightStyle';
-import RichEditPlugin from './richEdit';
 import renderBlock from './renderBlock';
+import RichEditPlugin from './richEdit';
+import tagParser from './tagParser';
 
 import type { Config } from '@markdoc/markdoc';
 
