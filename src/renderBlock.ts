@@ -8,6 +8,37 @@ import type { Config } from '@markdoc/markdoc';
 import type { DecorationSet } from '@codemirror/view'
 import type { EditorState, Range } from '@codemirror/state';
 
+const defaultConfig: Config = {
+  nodes: {
+    blockquote: {
+      render: 'blockquote',
+      transform(node, config) {
+        const children = node.transformChildren(config);
+        return new markdoc.Tag('blockquote', {}, children);
+      }
+    },
+    paragraph: {
+      render: 'p',
+      transform(node, config) {
+        const children = node.transformChildren(config);
+        return new markdoc.Tag('p', {}, children);
+      }
+    },
+    softbreak: {
+      render: 'br',
+      transform() {
+        return new markdoc.Tag('br', {});
+      }
+    },
+    hardbreak: {
+      render: 'br',
+      transform() {
+        return new markdoc.Tag('br', {});
+      }
+    }
+  }
+};
+
 const patternTag = /{%\s*(?<closing>\/)?(?<tag>[a-zA-Z0-9-_]+)(?<attrs>\s+[^]+)?\s*(?<self>\/)?%}\s*$/m;
 
 class RenderBlockWidget extends WidgetType {
@@ -16,8 +47,14 @@ class RenderBlockWidget extends WidgetType {
   constructor(public source: string, config: Config) {
     super();
 
+    const mergedConfig = {
+      ...defaultConfig,
+      nodes: { ...defaultConfig.nodes, ...config.nodes },
+      tags: { ...defaultConfig.tags, ...config.tags }
+    };
+
     const document = markdoc.parse(source);
-    const transformed = markdoc.transform(document, config);
+    const transformed = markdoc.transform(document, mergedConfig);
     this.rendered = markdoc.renderers.html(transformed);
   }
 
