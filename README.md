@@ -1,3 +1,5 @@
+**This fork has been moved to: [Markdown Canvas](https://github.com/emdashcodes/codemirror-markdown-canvas)**
+
 # Rich Markdown for CodeMirror 6
 
 [Demo](https://markdoc-hybrid-editor.netlify.app)
