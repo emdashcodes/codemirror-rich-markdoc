@@ -95,8 +95,9 @@ function replaceBlocks(
     from,
     to,
     enter(node) {
-      if (!['Table', 'Blockquote', 'MarkdocTag'].includes(node.name))
+      if (!['Table', 'Blockquote', 'MarkdocTag'].includes(node.name)) {
         return true;
+      }
 
       if (node.name === 'MarkdocTag') {
         const text = state.doc.sliceString(node.from, node.to);
@@ -109,7 +110,9 @@ function replaceBlocks(
 
         if (match?.groups?.closing) {
           const last = stack.pop();
-          if (last) tags.push([last, node.to]);
+          if (last) {
+            tags.push([last, node.to]);
+          }
           return true;
         }
 
@@ -117,7 +120,9 @@ function replaceBlocks(
         return true;
       }
 
-      if (cursor.from >= node.from && cursor.to <= node.to) return false;
+      if (cursor.from >= node.from && cursor.to <= node.to) {
+        return false;
+      }
 
       const text = state.doc.sliceString(node.from, node.to);
       const decoration = Decoration.replace({
@@ -131,7 +136,9 @@ function replaceBlocks(
   });
 
   for (const [from, to] of tags) {
-    if (cursor.from >= from && cursor.to <= to) continue;
+    if (cursor.from >= from && cursor.to <= to) {
+      continue;
+    }
     const text = state.doc.sliceString(from, to);
     const decoration = Decoration.replace({
       widget: new RenderBlockWidget(text, config),

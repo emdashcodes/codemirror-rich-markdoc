@@ -25,6 +25,7 @@ export default [
       'no-var': 'error',
       'object-shorthand': 'error',
       'prefer-template': 'error',
+      curly: ['error', 'all'],
       'prettier/prettier': 'error',
     },
   },

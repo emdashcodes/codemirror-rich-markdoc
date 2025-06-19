@@ -34,8 +34,9 @@ export default class RichEditPlugin implements PluginValue {
   }
 
   update(update: ViewUpdate): void {
-    if (update.docChanged || update.viewportChanged || update.selectionSet)
+    if (update.docChanged || update.viewportChanged || update.selectionSet) {
       this.decorations = this.process(update.view);
+    }
   }
 
   process(view: EditorView): DecorationSet {
@@ -47,33 +48,39 @@ export default class RichEditPlugin implements PluginValue {
         from,
         to,
         enter(node) {
-          if (node.name === 'MarkdocTag')
+          if (node.name === 'MarkdocTag') {
             widgets.push(decorationTag.range(node.from, node.to));
+          }
 
-          if (node.name === 'FencedCode')
+          if (node.name === 'FencedCode') {
             widgets.push(decorationCode.range(node.from, node.to));
+          }
 
           if (
             (node.name.startsWith('ATXHeading') ||
               tokenElement.includes(node.name)) &&
             cursor.from >= node.from &&
             cursor.to <= node.to
-          )
+          ) {
             return false;
+          }
 
           if (
             node.name === 'ListMark' &&
             node.matchContext(['BulletList', 'ListItem']) &&
             cursor.from != node.from &&
             cursor.from != node.from + 1
-          )
+          ) {
             widgets.push(decorationBullet.range(node.from, node.to));
+          }
 
-          if (node.name === 'HeaderMark')
+          if (node.name === 'HeaderMark') {
             widgets.push(decorationHidden.range(node.from, node.to + 1));
+          }
 
-          if (tokenHidden.includes(node.name))
+          if (tokenHidden.includes(node.name)) {
             widgets.push(decorationHidden.range(node.from, node.to));
+          }
 
           return true;
         },

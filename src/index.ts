@@ -131,8 +131,9 @@ export default function (config: MarkdocPluginConfig) {
         if (
           target instanceof Element &&
           target.matches('.cm-markdoc-renderBlock *')
-        )
+        ) {
           view.dispatch({ selection: { anchor: view.posAtDOM(target) } });
+        }
       },
     },
   });
