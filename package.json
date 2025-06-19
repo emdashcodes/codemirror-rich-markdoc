@@ -10,6 +10,7 @@
   "author": "Ryan Paul",
   "license": "MIT",
   "devDependencies": {
+    "@codemirror/language-data": "^6.1.0",
     "@codemirror/lang-markdown": "^6.0.5",
     "@codemirror/language": "^6.3.2",
     "@codemirror/state": "^6.2.0",
